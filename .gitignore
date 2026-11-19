@@ -1,0 +1,51 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# C extensions
+.installed.cfg
+
+# Distribution / packaging
+.venv/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Unit test / coverage reports
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Local run traces & evaluation artifacts
+runs/
+artifacts/
+*.jsonl
+
+# Operating System / IDE / Replit artifacts
+.DS_Store
+Thumbs.db
+.env
+.replit
+replit.nix
+.upm/
+.vscode/
+.idea/
