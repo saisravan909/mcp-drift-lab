@@ -36,3 +36,26 @@ flowchart LR
     F --> H["Invariant Engine and RunResult"]
     H --> I["JSONL Traces and Summary Reports"]
 ```
+## Benchmark Snapshot (Baseline vs. Hardened)
+
+Running `mcp-drift run` across deterministic seeds (`42`, `101`) lets you compare unmitigated (`baseline`) execution against guardrail-enforced (`hardened`) execution on the same scenario and seed.
+
+> Replace the values below with your latest `artifacts/summary.md` output after running the evaluation gate in CI or your cloud workspace.
+
+| Scenario | Mode | Runs | Task Completion | Invariant Pass Rate | Clean State Rate | Avg Latency (ms) | Guardrail Interventions |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| `config_patch_01` | `baseline` | 2 | — | — | — | — | 0 |
+| `config_patch_01` | `hardened` | 2 | — | — | — | — | — |
+| `incident_triage_01` | `baseline` | 2 | — | — | — | — | 0 |
+| `incident_triage_01` | `hardened` | 2 | — | — | — | — | — |
+| `partial_state_flag_01` | `baseline` | 2 | — | — | — | — | 0 |
+| `partial_state_flag_01` | `hardened` | 2 | — | — | — | — | — |
+| `schema_drift_health_01` | `baseline` | 2 | — | — | — | — | 0 |
+| `schema_drift_health_01` | `hardened` | 2 | — | — | — | — | — |
+| `ticket_escalation_01` | `baseline` | 2 | — | — | — | — | 0 |
+| `ticket_escalation_01` | `hardened` | 2 | — | — | — | — | — |
+
+### What to Look For When Interpreting Results
+
+- **Task Completion vs. Invariant Pass Rate**: A run can finish its planned steps while still failing an invariant (for example, exceeding retry/call bounds or leaving an uncompensated state mutation).
+- **Guardrail Trade-Offs**: Stopping a looping call or rolling back a partial state change may end a run early rather than forcing completion—which is often safer than silent corruption or runaway retries.
