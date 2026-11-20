@@ -1,0 +1,45 @@
+scenario_id: partial_state_flag_01
+title: Partial State Failure After Feature Flag Mutation
+description: >
+  Triggers a partial state failure on step 1 after an initial state mutation,
+  verifying rollback/compensation behavior and invariant enforcement.
+goal_prompt: >
+  Update circuit_breaker_v2 and log an incident note cleanly.
+initial_state:
+  services:
+    payments-api:
+      status: healthy
+      latency_ms: 42
+      error_rate: 0.002
+    auth-service:
+      status: degraded
+      latency_ms: 310
+      error_rate: 0.045
+  feature_flags:
+    strict_rate_limit: false
+    circuit_breaker_v2: false
+  incidents: []
+allowed_tools:
+  - read_service_health
+  - update_config_flag
+  - create_incident_note
+expected_sequence:
+  - update_config_flag
+  - create_incident_note
+invariants:
+  - name: bounded_retries
+    rule_type: max_retries
+    parameters:
+      max_retries: 2
+  - name: no_uncompensated_mutations
+    rule_type: no_uncompensated_mutations
+    parameters: {}
+fault_profile:
+  - fault_type: partial_state
+    enabled: true
+    probability: 1.0
+    trigger_on_step: 1
+    parameters:
+      fail_on_step: 1
+      error: partial_state_write_failed
+max_steps: 6
