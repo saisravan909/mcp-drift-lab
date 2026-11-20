@@ -25,14 +25,14 @@ Real-world tool integrations rarely fail in clean, textbook ways. A tool renames
 ---
 
 ## Execution & Evaluation Flow
-
 ```mermaid
 flowchart LR
-    A["Scenario YAML / JSON\n+ Seed + Mode"] --> B["Mock MCP Workspace\n(Clean Reset per Run)"]
-    B --> C{"Hardened Mode?\nLoopBreaker & Dedup"}
-    C -- "Blocked / Dup" --> G["Guardrail Trace\n& Early Stop"]
-    C -- "Allowed" --> D["Fault Injector\n(Drift, Latency, 503, State)"]
-    D --> E["Mock MCP Tools\n& State Mutations"]
-    E --> F{"Hardened Mode?\nSchemaGuard & Rollback"}
-    F --> H["Invariant Engine\n& RunResult"]
-    H --> I["JSONL Traces +\nsummary.json / summary.md"]# mcp-drift-lab
+    A["Scenario YAML + Seed + Mode"] --> B["Mock MCP Workspace (Clean Reset)"]
+    B --> C{"Hardened Mode? LoopBreaker and Dedup"}
+    C -- "Blocked or Dup" --> G["Guardrail Trace and Early Stop"]
+    C -- "Allowed" --> D["Fault Injector (Drift, Latency, 503, State)"]
+    D --> E["Mock MCP Tools and State Mutations"]
+    E --> F{"Hardened Mode? SchemaGuard and Rollback"}
+    F --> H["Invariant Engine and RunResult"]
+    H --> I["JSONL Traces and Summary Reports"]
+```
