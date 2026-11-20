@@ -1,7 +1,7 @@
 # mcp-drift-lab
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![CI: Eval Gate](https://img.shields.io/badge/CI-Eval%20Gate-informational.svg)](.github/workflows/eval-gate.yml)
 [![Framework: Pydantic v2](https://img.shields.io/badge/Pydantic-v2-teal.svg)](https://docs.pydantic.dev/)
 
@@ -59,3 +59,7 @@ Running `mcp-drift run` across deterministic seeds (`42`, `101`) lets you compar
 
 - **Task Completion vs. Invariant Pass Rate**: A run can finish its planned steps while still failing an invariant (for example, exceeding retry/call bounds or leaving an uncompensated state mutation).
 - **Guardrail Trade-Offs**: Stopping a looping call or rolling back a partial state change may end a run early rather than forcing completion—which is often safer than silent corruption or runaway retries.
+
+- ## License
+
+This project is licensed under the [Apache License 2.0](LICENSE).
