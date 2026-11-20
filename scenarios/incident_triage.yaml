@@ -1,0 +1,55 @@
+scenario_id: incident_triage_01
+title: Incident Triage With Latency Spike
+description: >
+  Simulates elevated latency with jitter while triaging a degraded service and
+  recording an incident note.
+goal_prompt: >
+  Check auth-service telemetry, enable circuit_breaker_v2, and log an incident note.
+initial_state:
+  services:
+    payments-api:
+      status: healthy
+      latency_ms: 42
+      error_rate: 0.002
+    auth-service:
+      status: degraded
+      latency_ms: 480
+      error_rate: 0.065
+  feature_flags:
+    strict_rate_limit: false
+    circuit_breaker_v2: false
+  incidents: []
+allowed_tools:
+  - read_service_health
+  - update_config_flag
+  - create_incident_note
+expected_sequence:
+  - read_service_health
+  - update_config_flag
+  - create_incident_note
+invariants:
+  - name: bounded_retries
+    rule_type: max_retries
+    parameters:
+      max_retries: 2
+  - name: bounded_tool_calls
+    rule_type: max_tool_calls
+    parameters:
+      max_calls: 8
+  - name: required_health_check
+    rule_type: required_tools_called
+    parameters:
+      tools:
+        - read_service_health
+  - name: clean_compensation
+    rule_type: no_uncompensated_mutations
+    parameters: {}
+fault_profile:
+  - fault_type: latency_spike
+    enabled: true
+    probability: 1.0
+    trigger_on_step: 1
+    parameters:
+      delay_ms: 250.0
+      jitter_ms: 50.0
+max_steps: 8
