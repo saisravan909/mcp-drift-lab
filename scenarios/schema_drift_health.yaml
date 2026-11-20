@@ -1,0 +1,49 @@
+scenario_id: schema_drift_health_01
+title: Schema Drift During Service Health Inspection
+description: >
+  Simulates a tool response dropping the expected status field while the agent
+  inspects service health and toggles a resilience feature flag.
+goal_prompt: >
+  Check auth-service health and enable circuit_breaker_v2 if needed.
+initial_state:
+  services:
+    payments-api:
+      status: healthy
+      latency_ms: 42
+      error_rate: 0.002
+    auth-service:
+      status: degraded
+      latency_ms: 310
+      error_rate: 0.045
+  feature_flags:
+    strict_rate_limit: false
+    circuit_breaker_v2: false
+  incidents: []
+allowed_tools:
+  - read_service_health
+  - update_config_flag
+  - create_incident_note
+expected_sequence:
+  - read_service_health
+  - update_config_flag
+invariants:
+  - name: bounded_retries
+    rule_type: max_retries
+    parameters:
+      max_retries: 2
+  - name: bounded_tool_calls
+    rule_type: max_tool_calls
+    parameters:
+      max_calls: 6
+  - name: clean_compensation
+    rule_type: no_uncompensated_mutations
+    parameters: {}
+fault_profile:
+  - fault_type: schema_drift
+    enabled: true
+    probability: 1.0
+    trigger_on_tool: read_service_health
+    parameters:
+      drift_mode: drop_field
+      field: status
+max_steps: 6
