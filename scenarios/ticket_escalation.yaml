@@ -1,0 +1,54 @@
+scenario_id: ticket_escalation_01
+title: Incident Escalation Workflow With Strict Tool Scope
+description: >
+  Verifies that an escalation workflow inspects service health, updates a
+  mitigation flag, and logs an incident within allowed tools and step bounds.
+goal_prompt: >
+  Verify service status, enable circuit_breaker_v2, and create an escalation incident note.
+initial_state:
+  services:
+    payments-api:
+      status: healthy
+      latency_ms: 45
+      error_rate: 0.003
+    auth-service:
+      status: degraded
+      latency_ms: 390
+      error_rate: 0.052
+  feature_flags:
+    strict_rate_limit: false
+    circuit_breaker_v2: false
+  incidents: []
+allowed_tools:
+  - read_service_health
+  - update_config_flag
+  - create_incident_note
+expected_sequence:
+  - read_service_health
+  - update_config_flag
+  - create_incident_note
+invariants:
+  - name: allowed_tools_only
+    rule_type: allowed_tools_only
+    parameters: {}
+  - name: bounded_retries
+    rule_type: max_retries
+    parameters:
+      max_retries: 2
+  - name: bounded_tool_calls
+    rule_type: max_tool_calls
+    parameters:
+      max_calls: 6
+  - name: clean_compensation
+    rule_type: no_uncompensated_mutations
+    parameters: {}
+fault_profile:
+  - fault_type: schema_drift
+    enabled: true
+    probability: 1.0
+    trigger_on_tool: read_service_health
+    parameters:
+      drift_mode: rename_field
+      old_key: latency_ms
+      new_key: duration_ms
+max_steps: 6
